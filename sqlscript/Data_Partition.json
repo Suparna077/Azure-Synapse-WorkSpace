@@ -1,0 +1,17 @@
+{
+	"name": "Data_Partition",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE [dbo].[FactInternetSales]\n(\n        [ProductKey] INT NOT NULL\n    ,   [OrderDateKey] INT NOT NULL\n    ,   [CustomerKey] INT NOT NULL\n    ,   [PromotionKey] INT NOT NULL\n    ,   [SalesOrderKey] NVARCHAR(20) NOT NULL\n    ,   [OrderQuantity] SMALLINT NOT NULL\n    ,   [UnitPrice]  MONEY NOT NULL\n    ,   [SalesAmount] Money NOT NULL\n\n)\nWITH\n(   CLUSTERED COLUMNSTORE INDEX\n,    DISTRIBUTION = HASH([ProductKey])\n,    PARTITION  (\n                    [OrderDateKey] RANGE RIGHT FOR VALUES\n                    (20000101\n                    )\n                )    \n);\n\nINSERT INTO dbo.FactInternetSales \nValues(1,19990101,1,1,1,1,1,1);\n\nINSERT INTO dbo.FactInternetSales \nValues(1,20000101,1,1,1,1,1,1);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "AzureSA_07",
+				"poolName": "Built-in"
+			},
+			"resultLimit": -1
+		},
+		"type": "SqlQuery"
+	}
+}
