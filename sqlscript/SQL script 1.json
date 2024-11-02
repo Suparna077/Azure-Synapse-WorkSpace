@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "IF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseDelimitedTextFormat') \n\tCREATE EXTERNAL FILE FORMAT [SynapseDelimitedTextFormat] \n\tWITH ( FORMAT_TYPE = DELIMITEDTEXT ,\n\t       FORMAT_OPTIONS (\n\t\t\t FIELD_TERMINATOR = ',',\n\t\t\t FIRST_ROW = 11,\n\t\t\t USE_TYPE_DEFAULT = FALSE\n\t\t\t))\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.external_data_sources WHERE name = 'azuredls07_azuredlssup07_dfs_core_windows_net') \n\tCREATE EXTERNAL DATA SOURCE [azuredls07_azuredlssup07_dfs_core_windows_net] \n\tWITH (\n\t\tLOCATION = 'abfss://azuredls07@azuredlssup07.dfs.core.windows.net' \n\t)\nGO\n\nCREATE EXTERNAL TABLE [dbo].[SampleTable] (\n\t[sex] nvarchar(4000),\n\t[year] bigint,\n\t[name] nvarchar(4000),\n\t[number] bigint\n\t)\n\tWITH (\n\tLOCATION = 'YearlyTopTen.csv',\n\tDATA_SOURCE = [azuredls07_azuredlssup07_dfs_core_windows_net],\n\tFILE_FORMAT = [SynapseDelimitedTextFormat]\n\t)\nGO\n\n\nSELECT TOP 100 * FROM [dbo].[SampleTable]\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "AzureSA_07",
+				"poolName": "Built-in"
+			},
+			"resultLimit": -1
+		},
+		"type": "SqlQuery"
+	}
+}
