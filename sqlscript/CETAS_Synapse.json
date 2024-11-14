@@ -1,0 +1,17 @@
+{
+	"name": "CETAS_Synapse",
+	"properties": {
+		"content": {
+			"query": "IF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseDelimitedTextFormat') \n\tCREATE EXTERNAL FILE FORMAT [SynapseDelimitedTextFormat] \n\tWITH (  \n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = ',',\n        PARSER_VERSION = '2.0',\n        FIRST_ROW = 2\n    ))\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.external_data_sources WHERE name = 'azuredls07_azuredlssup07_dfs_core_windows_net') \n\tCREATE EXTERNAL DATA SOURCE [azuredls07_azuredlssup07_dfs_core_windows_net] \n\tWITH (\n\t\tLOCATION = 'abfss://azuredls07@azuredlssup07.dfs.core.windows.net' \n\t)\nGO\n\nCREATE EXTERNAL TABLE [dbo].[SampleTable_Test]\n\tWITH (\n    LOCATION = 'aggregated_data/',\n    DATA_SOURCE = population_ds,  \n    FILE_FORMAT = census_file_format\n)\n-- \tAS \n-- \tSELECT\n--     Category, COUNT(*) AS ProductCount\n-- FROM\n--     OPENROWSET(\n--         BULK 'https://azuredlssup07.blob.core.windows.net/azuredls07/YearlyTopTen.csv',\n--         FORMAT = 'CSV',\n--         PARSER_VERSION = '2.0',\n--         HEADER_ROW = TRUE\n--     ) AS r \n-- \tGROUP BY Category\n-- GO\nAS \nSELECT\n    [SEX] -- Replace with the actual column name\nFROM\n    OPENROWSET(\n        BULK 'https://azuredlssup07.blob.core.windows.net/azuredls07/YearlyTopTen.csv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        FIRSTROW = 2 -- Skip the first row as it's the header\n    ) WITH (\n        [SEX] VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS -- Specify a valid collation\n    ) AS [result]\nGROUP BY [SEX];\n\nGO\n\nSELECT TOP 100 * FROM [dbo].[SampleTable]\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "AzureSA_07",
+				"poolName": "Built-in"
+			},
+			"resultLimit": -1
+		},
+		"type": "SqlQuery"
+	}
+}
